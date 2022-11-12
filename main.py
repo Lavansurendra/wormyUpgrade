@@ -6,7 +6,7 @@
 #LAVAN SURENDRA, ROBERT MIRANDA, SIMON BRIGGS, AKSHAT REGANI
 
 #SIMON BRIGGS START
-import random, pygame, sys, module_test1  #Importing Modules that will be used throughout the code
+import random, pygame, sys  #Importing Modules that will be used throughout the code
 from pygame.locals import *  #Importing Graphic functions
 
 FPS = 15  #Setting Frames Per Second, how often the game screen will refresh
@@ -62,7 +62,12 @@ def main():
   showStartScreen(
   )  #Calling a function made below, which executes a script that launches the game and runs a start up sequence
   while True:  #Always True
+
+    # this while loop needs to be changed to an if statement to check which value was returned by the user pressing a button to choose the difficulty
+    # depedning on which button was pressed a different rungame() function will be called
+
     runGame()  #Calls function 'runGame' which runs the actual game
+    # we need two rungame functions, one for the regular mode and one for our changed mode
     showGameOverScreen(
     )  #Once runGame is returned, then the game over screen is shown. This way it is shown once the player loses the game.
 
@@ -194,6 +199,56 @@ def checkForKeyPress():
 #ROBERT MIRANDA START
 
 
+#creates the start screen that opens when the user first runs the code
+def showStartScreen():
+  #sets the font and size of the letters (100 points in size)
+  titleFont = pygame.font.Font('freesansbold.ttf', 100)
+
+  #renders the word "Wormy!" in the font set above and makes the text white with a green background
+  titleSurf1 = titleFont.render('Wormy!', True, WHITE, DARKGREEN)
+
+  #renders the word "Wormy!" again with the font set above but in green text with a transparent background this time
+  titleSurf2 = titleFont.render('Wormy!', True, GREEN)
+
+  degrees1 = 0
+  degrees2 = 0
+
+  #causes the words on the start scren to rotate
+  while True:
+    DISPLAYSURF.fill(BGCOLOR)  #sets the display to black
+    rotatedSurf1 = pygame.transform.rotate(
+      titleSurf1, degrees1
+    )  # creates a new surface object containing the word "Wormy!" (the one with the background) that is rotated by degrees1 degrees
+    rotatedRect1 = rotatedSurf1.get_rect(
+    )  #creates a new rectangle around the rotated surface object
+    rotatedRect1.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2
+                           )  #gets the center of the rectangle
+    DISPLAYSURF.blit(rotatedSurf1,
+                     rotatedRect1)  #displays the new surface object
+
+    rotatedSurf2 = pygame.transform.rotate(
+      titleSurf2, degrees2
+    )  #creates a new surface object containing the word "Wormy!" (the one without the background) that is rotated by degrees2 degrees
+    rotatedRect2 = rotatedSurf2.get_rect(
+    )  #creates a new rectangle around the rotated surface object
+    rotatedRect2.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2
+                           )  #gets the center of the rectangle
+    DISPLAYSURF.blit(rotatedSurf2,
+                     rotatedRect2)  #displays the new surface object
+
+    drawPressKeyMsg()  #tells the user to press a button to start the game
+
+    if checkForKeyPress():  #checks if the user pressed a key
+      pygame.event.get()  # clear event queue
+      return 
+    #   replace this return statement with the design of our menu
+    #   we want two buttons and one button (regular mode) returns one value the other button (our changed mode) returns another value
+    #   then in the main function instead of running the game as soon as this function is broken out of, it would check which value is returned and run a different version of the game depending on what the value is
+    
+    pygame.display.update()  #updates the display
+    FPSCLOCK.tick(FPS)  #sets the frame rate
+    degrees1 += 3  # rotate by 3 degrees each frame
+    degrees2 += 7  # rotate by 7 degrees each frame
 
 
 def terminate():  #shuts down the game
