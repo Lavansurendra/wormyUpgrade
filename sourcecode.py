@@ -321,7 +321,7 @@ def drawApple(coord): #spawns the apple
   pygame.draw.rect(DISPLAYSURF, RED, appleRect) #pygame.draw will draw the apple using the colour, the rectangle size (cell)
 
 
-def drawGrid(): #Is responcible for drawing out the grid the snake moves along
+def drawGrid(): #Is responsible for drawing out the grid the snake moves along
   for x in range(0, WINDOWWIDTH, CELLSIZE):  # draw vertical lines
     pygame.draw.line(DISPLAYSURF, DARKGRAY, (x, 0), (x, WINDOWHEIGHT))#this function will draw the vertical lines
   for y in range(0, WINDOWHEIGHT, CELLSIZE):  # draw horizontal lines
