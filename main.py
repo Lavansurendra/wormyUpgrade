@@ -351,9 +351,26 @@ def drawWorm(wormCoords):#Takes the coordinates and then will draw the worm acco
     pygame.draw.rect(DISPLAYSURF, DARKGREEN, wormSegmentRect)#Draws the worm out line of the worm
     wormInnerSegmentRect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, #this is a modified version of wormSegmentRect since "The inner bright green rectangle starts 4 pixels to the right and 4 pixels below the topleft corner of the cell. The width and height of this rectangle are 8 pixels less than the cell size, so there will be a 4 pixel margin on the right and bottom sides as well." As said in documentation
                                        CELLSIZE - 8)
-    pygame.draw.rect(DISPLAYSURF, GREEN, wormInnerSegmentRect)#Draws the inner green of the worm
+    pygame.draw.rect(DISPLAYSURF, ranColour(), wormInnerSegmentRect)#Draws the inner green of the worm
 
     #(THE WORM SEGMENT IS A BOX WITH THE OUTER PORTION DARKGREEN AND THE INNER LIGHT GREEN)
+    
+def ranColour():
+  
+  randomcolour: random.ranint(0, 10)
+   if randomcolor == 0:
+    return WHITE
+   elif randomcolor == 1:
+    return BLACK
+   elif randomcolor == 2:
+    return GREEN
+   elif randomcolor == 3:
+    return DARKGREEN
+   elif randomcolor == 4:
+     return DARKGRAY
+   elif randomcolor == 5:
+     return RED
+
 
 
 def drawApple(coord): #spawns the apple
@@ -370,7 +387,7 @@ def drawGrid(): #Is responcible for drawing out the grid the snake moves along
     pygame.draw.line(DISPLAYSURF, DARKGRAY, (x, 0), (x, WINDOWHEIGHT))#this function will draw the vertical lines
   for y in range(0, WINDOWHEIGHT, CELLSIZE):  # draw horizontal lines
     pygame.draw.line(DISPLAYSURF, DARKGRAY, (0, y), (WINDOWWIDTH, y))#this function will draw the horizontal lines
-
+ 5
 
 if __name__ == '__main__':
   main()
