@@ -59,9 +59,10 @@ def main():
   pygame.display.set_caption(
     'Wormy')  #Defining what the name of the display will be.
 
-  showStartScreen(
-  )  #Calling a function made below, which executes a script that launches the game and runs a start up sequence
-  while True:  #Always True
+  showStartScreen()  #Calling a function made below, which executes a script that launches the game and runs a start up sequence
+  mode = drawMenuButtons()
+
+  if mode == "normal":  #Always True
 
     # this while loop needs to be changed to an if statement to check which value was returned by the user pressing a button to choose the difficulty
     # depedning on which button was pressed a different rungame() function will be called
@@ -70,6 +71,9 @@ def main():
     # we need two rungame functions, one for the regular mode and one for our changed mode
     showGameOverScreen(
     )  #Once runGame is returned, then the game over screen is shown. This way it is shown once the player loses the game.
+  
+  else:
+    runGameHard()
 
 
 #SIMON BRIGGS END
@@ -214,7 +218,7 @@ def showStartScreen():
   degrees2 = 0
   showmenu = False
   #causes the words on the start scren to rotate
-  while True:
+  while showmenu == False:
     DISPLAYSURF.fill(BGCOLOR)  #sets the display to black
     rotatedSurf1 = pygame.transform.rotate(
       titleSurf1, degrees1
@@ -240,9 +244,6 @@ def showStartScreen():
     
     if checkForKeyPress():  #checks if the user pressed a key
       showmenu = True
-    if showmenu == True:
-      drawMenuButtons()
-      showmenu = False
 
     #   replace this return statement with the design of our menu
     #   we want two buttons and one button (regular mode) returns one value the other button (our changed mode) returns another value
@@ -269,22 +270,19 @@ def drawMenuButtons():
       DISPLAYSURF.blit(hardtxt, (445, 215))
       pygame.display.update()
       FPSCLOCK.tick(FPS)  
-      running = True
 
-      while running == True:
+      while True:
         for event in pygame.event.get():
           if event.type == pygame.MOUSEBUTTONDOWN:
             mouse = pygame.mouse.get_pos()
             if 100 <= mouse [0] <= 250  and  200 <= mouse[1] <= 250:
-                print("normal mode selected!")
+              print("normal mode selected!")
+              return ("normal")
 
             if 400<= mouse[0] <= 550 and 200 <= mouse[1] <= 250:
-              print("hard mode selected!")          
-            running = False
-      
-      return
-
-    
+              print("hard mode selected!")
+              return ("hard")
+          
 
 def terminate():  #shuts down the game
   pygame.quit()  #exits pygame
