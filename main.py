@@ -270,17 +270,20 @@ def drawMenuButtons():
       DISPLAYSURF.blit(hardtxt, (445, 215))
       pygame.display.update()
       FPSCLOCK.tick(FPS)  
+      button_press = False
 
-      while True:
+      while button_press == False:
         for event in pygame.event.get():
           if event.type == pygame.MOUSEBUTTONDOWN:
             mouse = pygame.mouse.get_pos()
             if 100 <= mouse [0] <= 250  and  200 <= mouse[1] <= 250:
               print("normal mode selected!")
+              button_press = True
               return ("normal")
 
-            if 400<= mouse[0] <= 550 and 200 <= mouse[1] <= 250:
+            elif 400<= mouse[0] <= 550 and 200 <= mouse[1] <= 250:
               print("hard mode selected!")
+              button_press = True
               return ("hard")
           
 
