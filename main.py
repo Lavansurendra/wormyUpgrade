@@ -274,7 +274,10 @@ def drawMenuButtons():
 
       while button_press == False:
         for event in pygame.event.get():
-          if event.type == pygame.MOUSEBUTTONDOWN:
+          if event.type == QUIT:
+            terminate()
+
+          elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse = pygame.mouse.get_pos()
             if 100 <= mouse [0] <= 250  and  200 <= mouse[1] <= 250:
               print("normal mode selected!")
