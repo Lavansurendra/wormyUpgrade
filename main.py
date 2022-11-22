@@ -47,7 +47,7 @@ def main():
   #Setting Global Variables that can be used anywhere in the function
   global FPSCLOCK, DISPLAYSURF, BASICFONT
 
-  pygame.init()  #A function from the pygame module, starts the game.
+  pygame.init()  #A function from the pygame module, initializes the game.
   FPSCLOCK = pygame.time.Clock(
   )  #Setting FPSCLOCK to a function from pygame, which creates an object to track time
   DISPLAYSURF = pygame.display.set_mode(
@@ -55,7 +55,7 @@ def main():
   )  #Setting DISPLAYSURF to be the object that displays a visible game screen.
   BASICFONT = pygame.font.Font(
     'freesansbold.ttf',
-    18)  #Setting the game font to BASICFONT with a function from pygame.
+    18)  #Setting the game font to BASICFONT with a function from pygame. Chosen font is freesansbold
   pygame.display.set_caption(
     'Wormy')  #Defining what the name of the display will be.
 
@@ -174,6 +174,104 @@ def runGame():
 
 
 #LAVAN SURENDRA END
+
+def runGameHard(): #This is the second game mode, and the change we made to the game. This version should make the worm speed up to
+  #add extra difficulty, as well as change the colours displayed on screen to make things more exciting and disorienting.
+
+    # Set a random start point.
+  startx = random.randint(5, CELLWIDTH - 6)
+  starty = random.randint(5, CELLHEIGHT - 6)
+  # Using a dictionary to define the coordinates of the snake, along with the next two body portions of the snake in the x direction (this means that the snake starts with 3 parts)
+  wormCoords = [{
+    'x': startx,
+    'y': starty
+  }, {
+    'x': startx - 1,
+    'y': starty
+  }, {
+    'x': startx - 2,
+    'y': starty
+  }]
+  #the snakes original direction is defined to be towards the right
+  direction = RIGHT
+
+  # Starting the apple in a random place by calling the getRandomLocation() function
+  apple = getRandomLocation()
+
+  while True:  # main game loop which will run until the return statement occurs
+    for event in pygame.event.get(
+    ):  # event handling loop which iterates through each event that occurs
+      # If the type of the event is quit the program will call the terminate() function
+      if event.type == QUIT:
+        terminate()
+# If the user presses a key the KEYDOWN event type will be triggered
+      elif event.type == KEYDOWN:
+
+        # a nested if statement to determine whether the pressed key was a (for WASD controls) or the left arrow key (for arrow controls). If the direction is opposite to the key press it will not change the direction of the snake but otherwise this will change the direction of the snake to left
+        if (event.key == K_LEFT or event.key == K_a) and direction != RIGHT:
+          direction = LEFT
+
+# a nested if statement to determine whether the pressed key was d (for WASD controls) or the right arrow key (for arrow controls). If the direction is opposite to the key press it will not change the direction of the snake but otherwise this will change the direction of the snake to right
+        elif (event.key == K_RIGHT or event.key == K_d) and direction != LEFT:
+          direction = RIGHT
+
+# a nested if statement to determine whether the pressed key was w (for WASD controls) or the up arrow key (for arrow controls). If the direction is opposite to the key press it will not change the direction of the snake but otherwise this will change the direction of the snake to up
+        elif (event.key == K_UP or event.key == K_w) and direction != DOWN:
+          direction = UP
+
+# a nested if statement to determine whether the pressed key was a (for WASD controls) or the left arrow key (for arrow controls). If the direction is opposite to the key press it will not change the direction of the snake but otherwise this will change the direction of the snake to down
+        elif (event.key == K_DOWN or event.key == K_s) and direction != UP:
+          direction = DOWN
+
+# a nested if statement to determine whether the pressed key was the escape key. If this is the case it'll call the terminate function to end the game
+        elif event.key == K_ESCAPE:
+          terminate()
+
+    # check if the worm has the edge by comparing the position of the head with the edge of the frame. Cellwidth and cellheight are the maximum dimensions of the games frame whereas the -1 positions are associated with the minimum positions of the games frame
+    if wormCoords[HEAD]['x'] == -1 or wormCoords[HEAD][
+        'x'] == CELLWIDTH or wormCoords[HEAD]['y'] == -1 or wormCoords[HEAD][
+          'y'] == CELLHEIGHT:
+      return  # game over if this occurs
+
+#  This loop goes through each of the body positions defined in the wormcords dictionary and the if statement checks if the coordinates of the head are matching with the coordinates of the body. If this occurs the game ends as the worm has hit itself
+    for wormBody in wormCoords[1:]:
+      if wormBody['x'] == wormCoords[HEAD]['x'] and wormBody[
+          'y'] == wormCoords[HEAD]['y']:
+        return  # game over
+
+        #this if statement checks if the length of the wormn has increased by a certain amount, and if it has then it speeds up
+
+    # this if statement checks if worm has eaten an apple by seeing if it's coordinates match with the apples coordinates, if this is the case the worms tail segment isn't removed
+    if wormCoords[HEAD]['x'] == apple['x'] and wormCoords[HEAD]['y'] == apple[
+        'y']:
+      # don't remove worm's tail segment, and since the worm is moved by constantly adding head segments and removing tail segments, this effectively makes the worm one tile longer
+      apple = getRandomLocation(
+      )  # set coordinates fora new apple positon somewhere in the games frame (which will later be passed on to the drawApple function)
+    else:
+        del wormCoords[-1]
+# If no apple is contacted then the lastmost segment of the worm is removed, and since a new head segment is added in the portion of code below, this makes the worm appear to be moving.
+
+# move the worm by adding a segment in the direction it is moving. Each of the if and else if conditions define a new head at the coordinates in front of the current head depending on which direction the worm is currently facing.
+    if direction == UP:
+      newHead = {'x': wormCoords[HEAD]['x'], 'y': wormCoords[HEAD]['y'] - 1}
+    elif direction == DOWN:
+      newHead = {'x': wormCoords[HEAD]['x'], 'y': wormCoords[HEAD]['y'] + 1}
+    elif direction == LEFT:
+      newHead = {'x': wormCoords[HEAD]['x'] - 1, 'y': wormCoords[HEAD]['y']}
+    elif direction == RIGHT:
+      newHead = {'x': wormCoords[HEAD]['x'] + 1, 'y': wormCoords[HEAD]['y']}
+# Once the new head is defined it is then added into the dictionary containing the worm's body coordinates. Then using other functions, the grid is redrawn, along with the worm (based on the new worm coordinates) and the apple (based on the apple coordinates). The score is also updated by subtracting the original number of body pieces (3) by the current number of body pieces. Finally the display is updated
+    wormCoords.insert(0, newHead)
+    DISPLAYSURF.fill(BGCOLOR)
+    drawGrid()
+    drawWorm(wormCoords)
+    drawApple(apple)
+    drawScore(len(wormCoords) - 3)
+    pygame.display.update()
+    # The FPS increases, which makes the game appear to speed up
+    FPS=15+(1.05*(len(wormCoords)-3))
+    # The FPS clock is ticked forward to update it
+    FPSCLOCK.tick(FPS)
 
 
 #AKSHAT REGANI START
