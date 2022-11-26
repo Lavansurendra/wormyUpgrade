@@ -75,7 +75,7 @@ def main():
   showStartScreen()  #Calling a function made below, which executes a script that launches the game and runs a start up sequence
   mode = drawMenuButtons()
 
-  if mode == "normal":  #Always True
+  if mode == "normal":  #determines which of the modes needs to be run, depending on which button is pressed in the menu 
 
     # this while loop needs to be changed to an if statement to check which value was returned by the user pressing a button to choose the difficulty
     # depedning on which button was pressed a different rungame() function will be called
@@ -86,8 +86,10 @@ def main():
     )  #Once runGame is returned, then the game over screen is shown. This way it is shown once the player loses the game.
   
   else:
-    runGameHard()
-
+    runGameHard() #Calls function 'runGameHard' which runs the game on hard mode
+    showGameOverScreen(
+    )  #Once runGameHard is returned, then the game over screen is shown. This way it is shown once the player loses the game.
+  
 
 #SIMON BRIGGS END
 
@@ -380,33 +382,38 @@ def showStartScreen():
 
 def drawMenuButtons():
       pygame.event.get()  # clear event queue
-      DISPLAYSURF.fill(BGCOLOR)
-      btn_colour = (100,100,100) #Button colour 
-      txt_colour = (250, 200, 200) #Text colour
+      DISPLAYSURF.fill(BGCOLOR) #filling the screen with the background colour 
+      btn_colour = (100,100,100) # Defining Button colour 
+      txt_colour = (250, 200, 200) # Defining Text colour
 
+      # Drawing the normal mode button with it's predefined colours in a specific position on the screen 
       pygame.draw.rect(DISPLAYSURF,btn_colour,[ 100, 200,150,50])
       normaltxt = BASICFONT.render("Normal", True, txt_colour)      
       DISPLAYSURF.blit(normaltxt, (145, 215))
       
-      
+      #Drawing the hard mode button with it's predefined colours next to the normal button 
       pygame.draw.rect(DISPLAYSURF,btn_colour,[ 400, 200,150,50])
       hardtxt = BASICFONT.render("Hard", True, txt_colour)      
       DISPLAYSURF.blit(hardtxt, (445, 215))
-      pygame.display.update()
-      FPSCLOCK.tick(FPS)  
-      button_press = False
+      pygame.display.update() #updating the screen to display both buttons 
+      FPSCLOCK.tick(FPS) #ticking the game clock forward
+      button_press = False #variable to check if either button was pressed 
 
+      #This loop checks will run until either of the buttons are checked 
       while button_press == False:
+        #Inside the loop all events such as key presses and clicks are checked
         for event in pygame.event.get():
+          #for each of these events if the event is the quit event (pressing the x on the screen) the terminate function is called, ending the game 
           if event.type == QUIT:
             terminate()
-
+          #If any of these events is a mouse left click, more checks are performed
           elif event.type == pygame.MOUSEBUTTONDOWN:
-            mouse = pygame.mouse.get_pos()
+            mouse = pygame.mouse.get_pos() #finds the position of the mouse at the time the button was clicked 
+            #Checking if the x and y coordinates of the mouse are within the x and y coordinates of the normal mode button, if this is the case then the loop ends and normal is returned
             if 100 <= mouse [0] <= 250  and  200 <= mouse[1] <= 250:
               button_press = True
               return ("normal")
-
+            #Checking if the x and y coordinates of the mouse are within the x and y coordinates of the hard mode button, if this is the case then the loop ends and hard is returned
             elif 400<= mouse[0] <= 550 and 200 <= mouse[1] <= 250:
               button_press = True
               return ("hard")
