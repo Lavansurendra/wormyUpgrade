@@ -75,20 +75,21 @@ def main():
   showStartScreen()  #Calling a function made below, which executes a script that launches the game and runs a start up sequence
   mode = drawMenuButtons()
 
-  if mode == "normal":  #determines which of the modes needs to be run, depending on which button is pressed in the menu 
+  while True:
+    if mode == "normal":  #determines which of the modes needs to be run, depending on which button is pressed in the menu 
 
-    # this while loop needs to be changed to an if statement to check which value was returned by the user pressing a button to choose the difficulty
-    # depedning on which button was pressed a different rungame() function will be called
+      # this while loop needs to be changed to an if statement to check which value was returned by the user pressing a button to choose the difficulty
+      # depedning on which button was pressed a different rungame() function will be called
 
-    runGame()  #Calls function 'runGame' which runs the actual game
-    # we need two rungame functions, one for the regular mode and one for our changed mode
-    showGameOverScreen(
-    )  #Once runGame is returned, then the game over screen is shown. This way it is shown once the player loses the game.
-  
-  else:
-    runGameHard() #Calls function 'runGameHard' which runs the game on hard mode
-    showGameOverScreen(
-    )  #Once runGameHard is returned, then the game over screen is shown. This way it is shown once the player loses the game.
+      runGame()  #Calls function 'runGame' which runs the actual game
+      # we need two rungame functions, one for the regular mode and one for our changed mode
+      showGameOverScreen(
+      )  #Once runGame is returned, then the game over screen is shown. This way it is shown once the player loses the game.
+    
+    else:
+      runGameHard() #Calls function 'runGameHard' which runs the game on hard mode
+      showGameOverScreen(
+      )  #Once runGameHard is returned, then the game over screen is shown. This way it is shown once the player loses the game.
   
 
 #SIMON BRIGGS END
