@@ -27,9 +27,22 @@ CELLHEIGHT = int(
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+LIGHTRED = (255, 115, 115 )
 GREEN = (0, 255, 0)
 DARKGREEN = (0, 155, 0)
 DARKGRAY = (40, 40, 40)
+DARKORANGE = (255, 143, 0)
+ORANGE = (255, 177, 77)
+DARKPURPLE = (240, 0, 255 )
+PURPLE = (246, 102, 255)
+YELLOW = (251, 254, 85) 
+DARKYELLOW = (246, 102, 255 )
+DARKCYAN = (0, 255, 209)
+CYAN = (105, 255, 253)
+DARKBLUE = (0, 81, 255 )
+BLUE = (111, 157, 255 ) 
+DARKPINK = (255, 0, 197)
+PINK = (255, 115, 223)
 BGCOLOR = BLACK  #Black defined already on line 24
 
 #Setting direction variables, so that don't need to worry about forgetting to make it a string
@@ -165,15 +178,126 @@ def runGame():
     wormCoords.insert(0, newHead)
     DISPLAYSURF.fill(BGCOLOR)
     drawGrid()
-    drawWorm(wormCoords)
-    drawApple(apple)
-    drawScore(len(wormCoords) - 3)
+    colourScore = len(wormCoords) - 3 #Variable contains score
+    if(colourScore == 0): #If score is 0 then defualt colour of worm to orange theme
+      old_inside = ORANGE #old_inside will keep the old inside colour that was used 
+      old_outside = DARKORANGE #old_outside will keep the old outside colour that was used 
+    FWcolour = getRandomColour(len(wormCoords) - 3,old_outside,old_inside) #This will hold the random colour theme that getRandomColour gives it
+    old_outside = FWcolour[0] #Holds the current colours in a list
+    old_inside = FWcolour[1]
+    drawWorm(wormCoords,FWcolour) #Draws the worm using that list
+    drawApple(apple) #Draws the apple
+    drawScore(len(wormCoords) - 3) #Displays the score
     pygame.display.update()
     # The FPS clock is ticked forward to update it
     FPSCLOCK.tick(FPS)
 
 
 #LAVAN SURENDRA END
+def runGameHard(): #This is the second game mode, and the change we made to the game. This version should make the worm speed up to
+  #add extra difficulty, as well as change the colours displayed on screen to make things more exciting and disorienting.
+
+    # Set a random start point.
+  startx = random.randint(5, CELLWIDTH - 6)
+  starty = random.randint(5, CELLHEIGHT - 6)
+  # Using a dictionary to define the coordinates of the snake, along with the next two body portions of the snake in the x direction (this means that the snake starts with 3 parts)
+  wormCoords = [{
+    'x': startx,
+    'y': starty
+  }, {
+    'x': startx - 1,
+    'y': starty
+  }, {
+    'x': startx - 2,
+    'y': starty
+  }]
+  #the snakes original direction is defined to be towards the right
+  direction = RIGHT
+
+  # Starting the apple in a random place by calling the getRandomLocation() function
+  apple = getRandomLocation()
+
+  while True:  # main game loop which will run until the return statement occurs
+    for event in pygame.event.get(
+    ):  # event handling loop which iterates through each event that occurs
+      # If the type of the event is quit the program will call the terminate() function
+      if event.type == QUIT:
+        terminate()
+# If the user presses a key the KEYDOWN event type will be triggered
+      elif event.type == KEYDOWN:
+
+        # a nested if statement to determine whether the pressed key was a (for WASD controls) or the left arrow key (for arrow controls). If the direction is opposite to the key press it will not change the direction of the snake but otherwise this will change the direction of the snake to left
+        if (event.key == K_LEFT or event.key == K_a) and direction != RIGHT:
+          direction = LEFT
+
+# a nested if statement to determine whether the pressed key was d (for WASD controls) or the right arrow key (for arrow controls). If the direction is opposite to the key press it will not change the direction of the snake but otherwise this will change the direction of the snake to right
+        elif (event.key == K_RIGHT or event.key == K_d) and direction != LEFT:
+          direction = RIGHT
+
+# a nested if statement to determine whether the pressed key was w (for WASD controls) or the up arrow key (for arrow controls). If the direction is opposite to the key press it will not change the direction of the snake but otherwise this will change the direction of the snake to up
+        elif (event.key == K_UP or event.key == K_w) and direction != DOWN:
+          direction = UP
+
+# a nested if statement to determine whether the pressed key was a (for WASD controls) or the left arrow key (for arrow controls). If the direction is opposite to the key press it will not change the direction of the snake but otherwise this will change the direction of the snake to down
+        elif (event.key == K_DOWN or event.key == K_s) and direction != UP:
+          direction = DOWN
+
+# a nested if statement to determine whether the pressed key was the escape key. If this is the case it'll call the terminate function to end the game
+        elif event.key == K_ESCAPE:
+          terminate()
+
+    # check if the worm has the edge by comparing the position of the head with the edge of the frame. Cellwidth and cellheight are the maximum dimensions of the games frame whereas the -1 positions are associated with the minimum positions of the games frame
+    if wormCoords[HEAD]['x'] == -1 or wormCoords[HEAD][
+        'x'] == CELLWIDTH or wormCoords[HEAD]['y'] == -1 or wormCoords[HEAD][
+          'y'] == CELLHEIGHT:
+      return  # game over if this occurs
+
+#  This loop goes through each of the body positions defined in the wormcords dictionary and the if statement checks if the coordinates of the head are matching with the coordinates of the body. If this occurs the game ends as the worm has hit itself
+    for wormBody in wormCoords[1:]:
+      if wormBody['x'] == wormCoords[HEAD]['x'] and wormBody[
+          'y'] == wormCoords[HEAD]['y']:
+        return  # game over
+
+        #this if statement checks if the length of the wormn has increased by a certain amount, and if it has then it speeds up
+
+    # this if statement checks if worm has eaten an apple by seeing if it's coordinates match with the apples coordinates, if this is the case the worms tail segment isn't removed
+    if wormCoords[HEAD]['x'] == apple['x'] and wormCoords[HEAD]['y'] == apple[
+        'y']:
+      # don't remove worm's tail segment, and since the worm is moved by constantly adding head segments and removing tail segments, this effectively makes the worm one tile longer
+      apple = getRandomLocation(
+      )  # set coordinates fora new apple positon somewhere in the games frame (which will later be passed on to the drawApple function)
+    else:
+        del wormCoords[-1]
+# If no apple is contacted then the lastmost segment of the worm is removed, and since a new head segment is added in the portion of code below, this makes the worm appear to be moving.
+
+# move the worm by adding a segment in the direction it is moving. Each of the if and else if conditions define a new head at the coordinates in front of the current head depending on which direction the worm is currently facing.
+    if direction == UP:
+      newHead = {'x': wormCoords[HEAD]['x'], 'y': wormCoords[HEAD]['y'] - 1}
+    elif direction == DOWN:
+      newHead = {'x': wormCoords[HEAD]['x'], 'y': wormCoords[HEAD]['y'] + 1}
+    elif direction == LEFT:
+      newHead = {'x': wormCoords[HEAD]['x'] - 1, 'y': wormCoords[HEAD]['y']}
+    elif direction == RIGHT:
+      newHead = {'x': wormCoords[HEAD]['x'] + 1, 'y': wormCoords[HEAD]['y']}
+# Once the new head is defined it is then added into the dictionary containing the worm's body coordinates. Then using other functions, the grid is redrawn, along with the worm (based on the new worm coordinates) and the apple (based on the apple coordinates). The score is also updated by subtracting the original number of body pieces (3) by the current number of body pieces. Finally the display is updated
+    wormCoords.insert(0, newHead)
+    DISPLAYSURF.fill(BGCOLOR)
+    drawGrid() #Draws Grid
+    colourScore = len(wormCoords) - 3 #Variable contains score
+    if(colourScore == 0): #If score is 0 then defualt colour of worm to orange theme
+      old_inside = ORANGE #old_inside will keep the old inside colour that was used 
+      old_outside = DARKORANGE #old_outside will keep the old outside colour that was used 
+    FWcolour = getRandomColour(len(wormCoords) - 3,old_outside,old_inside) #This will hold the random colour theme that getRandomColour gives it
+    old_outside = FWcolour[0] #Holds the current colours in a list
+    old_inside = FWcolour[1]
+    drawWorm(wormCoords,FWcolour) #Draws the worm using that list
+    drawApple(apple) #Draws the apple
+    drawScore(len(wormCoords) - 3) #Displays the score
+    pygame.display.update()
+    # The FPS increases, which makes the game appear to speed up
+    FPS=15+(1.05*(len(wormCoords)-3)) 
+    # The FPS clock is ticked forward to update it
+    FPSCLOCK.tick(FPS)
 
 
 #AKSHAT REGANI START
@@ -280,12 +404,10 @@ def drawMenuButtons():
           elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse = pygame.mouse.get_pos()
             if 100 <= mouse [0] <= 250  and  200 <= mouse[1] <= 250:
-              print("normal mode selected!")
               button_press = True
               return ("normal")
 
             elif 400<= mouse[0] <= 550 and 200 <= mouse[1] <= 250:
-              print("hard mode selected!")
               button_press = True
               return ("hard")
           
@@ -345,17 +467,49 @@ def drawScore(score):
   scoreRect.topleft = (WINDOWWIDTH - 120, 10) #Will display this box with those dimensions 120x10
   DISPLAYSURF.blit(scoreSurf, scoreRect) #Displays the image with the score and rectangle
 
-
-def drawWorm(wormCoords):#Takes the coordinates and then will draw the worm accordingly
+def getRandomColour(colourScore,outside,inside):
+    colourNum = random.randint(1,7) #Change Theme of the worm Randomly
+    oldoutside = outside #stores the old outside and inside colours
+    oldinside = inside
+    #Dark outside Light Inside
+    if((colourScore % 5 == 0) and colourScore != 0):#Checks if score is a multiple of 5 and then will change colour accordingly unless game hasn't started
+      if colourNum == 1:#All if statements corresponding to numbers and colours
+          outside = DARKORANGE
+          inside = ORANGE
+      if colourNum == 2:
+          outside = DARKGREEN
+          inside = GREEN
+      if colourNum == 3:
+          outside = DARKYELLOW
+          inside = YELLOW
+      if colourNum == 4:
+          outside = DARKCYAN
+          inside = CYAN
+      if colourNum == 5:
+          outside = DARKBLUE
+          inside = BLUE
+      if colourNum == 6:
+          outside = DARKPINK
+          inside = PINK
+      if colourNum == 7:
+          outside = RED
+          inside = LIGHTRED
+      
+    else:#if it isn't a multiple of 5 it will keep the current colour scheme and return the same values
+      outside = oldoutside
+      inside = oldinside
+    return [outside, inside]
+  
+def drawWorm(wormCoords, Fcolour):#Takes the coordinates and then will draw the worm accordingly
   for coord in wormCoords:
     x = coord['x'] * CELLSIZE
     y = coord['y'] * CELLSIZE
-    #These two will hold the coordinates for the x and y postion 
+   #These two will hold the coordinates for the x and y postion 
     wormSegmentRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE) #Stores the data of the worm segment on its respceted coordinate and cell
-    pygame.draw.rect(DISPLAYSURF, DARKGREEN, wormSegmentRect)#Draws the worm out line of the worm
+    pygame.draw.rect(DISPLAYSURF, Fcolour[0], wormSegmentRect)#Draws the worm out line of the worm using Fcolour as a list
     wormInnerSegmentRect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, #this is a modified version of wormSegmentRect since "The inner bright green rectangle starts 4 pixels to the right and 4 pixels below the topleft corner of the cell. The width and height of this rectangle are 8 pixels less than the cell size, so there will be a 4 pixel margin on the right and bottom sides as well." As said in documentation
                                        CELLSIZE - 8)
-    pygame.draw.rect(DISPLAYSURF, GREEN, wormInnerSegmentRect)#Draws the inner green of the worm
+    pygame.draw.rect(DISPLAYSURF, Fcolour[1], wormInnerSegmentRect)#Draws the inner colour of the worm using Fcolour as a list
 
     #(THE WORM SEGMENT IS A BOX WITH THE OUTER PORTION DARKGREEN AND THE INNER LIGHT GREEN)
 
